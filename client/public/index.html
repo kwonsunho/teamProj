@@ -23,12 +23,21 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-   
+
   <title>리액트 팀 프로젝트</title>
 </head>
 
 <body>
+
   <noscript>You need to enable JavaScript to run this app.</noscript>
+
+  <input type="file" id="fileElem" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+  <a href="#" id="fileSelect">Select some files</a>
+  <div id="fileList">
+    <p>No files selected!</p>
+    <button id="saveBtn" onclick="save(imgObj)">저장</button>
+  </div>
+
   <div id="root"></div>
   <!--
       This HTML file is a template.
@@ -40,7 +49,65 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b8a6b61f2cce228fc7e6b3723a5ff84&libraries=services,clusterer,drawing"></script>
+  <script>
+    var imgObj = null;
+    window.URL = window.URL || window.webkitURL;
+
+    const fileSelect = document.getElementById("fileSelect"),
+      fileElem = document.getElementById("fileElem"),
+      fileList = document.getElementById("fileList");
+
+    fileSelect.addEventListener("click", function (e) {
+      if (fileElem) {
+        fileElem.click();
+      }
+      e.preventDefault(); // prevent navigation to "#"
+    }, false);
+
+    function handleFiles(files) {
+      var sb = document.getElementById("saveBtn");
+      if (!files.length) {
+        fileList.innerHTML = "<p>No files selected!</p>";
+      } else {
+        fileList.innerHTML = "";
+        const list = document.createElement("ul");
+        fileList.appendChild(list);
+        for (let i = 0; i < files.length; i++) {
+          const li = document.createElement("li");
+          list.appendChild(li);
+
+          const img = document.createElement("img");
+          img.src = window.URL.createObjectURL(files[i]);
+          img.height = 60;
+          img.onload = function () {
+            window.URL.revokeObjectURL(this.src);
+          }
+          li.appendChild(img);
+          const info = document.createElement("span");
+          info.innerHTML = files[i].name + ": " + files[i].size + " bytes";
+          li.appendChild(info);
+          list.appendChild(sb);
+          imgObj = files;
+        }
+      }
+    }
+
+    function save(obj) {
+      var i = obj;
+      console.log(i);
+
+      new FileUpload(obj);
+    }
+
+    function FileUpload(obj) {
+      var blob = new Blob(obj);
+      console.log(blob);
+    }
+
+
+  </script>
+  <script type="text/javascript"
+    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b8a6b61f2cce228fc7e6b3723a5ff84&libraries=services,clusterer,drawing"></script>
 </body>
 
 </html>
